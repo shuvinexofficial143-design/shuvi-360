@@ -1,0 +1,37 @@
+name: Foundation verification
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22"
+      - run: npm install --no-audit --no-fund
+      - run: npm test
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Smoke test production server
+        run: |
+          npm start -- --port 3000 > /tmp/shuvi.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:3000/api/health; then break; fi
+            sleep 1
+          done
+          curl -fsS http://localhost:3000/ | grep -q 'Shuvi 360'
+          curl -fsS http://localhost:3000/about | grep -q 'Creativity meets technology'
+          curl -fsS http://localhost:3000/api/health | grep -q 'not-configured'
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: npm-lockfile
+          path: package-lock.json
