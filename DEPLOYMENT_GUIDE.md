@@ -1,0 +1,2 @@
+# Deployment
+Node.js 22; install dependencies and commit the generated lockfile, run lint, tests, typecheck, production build. Vercel Hobby is personal/non-commercial only; do not launch commercial agency on Hobby. Use an existing authorized eligible plan or obtain approval for paid plan; no paid plan activated by this repo. Use dedicated Neon database in Phase 4 after checking terms/limits. Set secrets in hosting settings, never in GitHub. Keep preview noindex until launch gate passes. No deployment URL verified yet.
